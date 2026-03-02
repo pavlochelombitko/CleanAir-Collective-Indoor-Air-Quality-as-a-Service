@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanAir Collective — Indoor Air Quality as a Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --midnight: #0a0f1e;
+  --deep: #111833;
+  --slate: #1a2340;
+  --steel: #2a3558;
+  --mist: #8892b0;
+  --cloud: #b8c0d8;
+  --white: #f0f2f8;
+  --pure: #ffffff;
+  --cyan: #00d4ff;
+  --teal: #00b8a9;
+  --mint: #4aeabc;
+  --sky: #64b5f6;
+  --warn: #ff6b6b;
+  --amber: #ffc857;
+  --good: #4aeabc;
+  --radius: 14px;
+  --glow: 0 0 40px rgba(0, 212, 255, 0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--midnight);
+  color: var(--cloud);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ======================== UTILITY ======================== */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section {
+  padding: 7rem 0;
+  position: relative;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 1.2rem;
+}
+
+.section-tag::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.section-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  color: var(--pure);
+  line-height: 1.2;
+  margin-bottom: 1.2rem;
+  max-width: 680px;
+}
+
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--mist);
+  max-width: 580px;
+  line-height: 1.8;
+}
+
+/* ======================== ANIMATED BG ======================== */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-glow-1 {
+  position: fixed;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatGlow 25s ease-in-out infinite;
+}
+
+.bg-glow-2 {
+  position: fixed;
+  bottom: -200px; left: -200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(74,234,188,0.04) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatGlow 30s ease-in-out infinite reverse;
+}
+
+@keyframes floatGlow {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(40px, -30px); }
+  66% { transform: translate(-20px, 40px); }
+}
+
+/* ======================== NAV ======================== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1rem 0;
+  background: rgba(10, 15, 30, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,212,255,0.06);
+}
+
+nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: var(--pure);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.logo-icon::after {
+  content: '';
+  width: 10px; height: 10px;
+  border: 2px solid var(--pure);
+  border-radius: 50%;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--mist);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover { color: var(--cyan); }
+
+.nav-cta {
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  color: var(--midnight) !important;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+}
+
+/* ======================== HERO ======================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-top: 5rem;
+}
+
+.hero .container {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.15);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--cyan);
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.8s ease both;
+}
+
+.hero h1 {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(2.5rem, 5.5vw, 4rem);
+  color: var(--pure);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.8s ease 0.15s both;
+}
+
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--cyan), var(--mint));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-desc {
+  font-size: 1.1rem;
+  color: var(--mist);
+  max-width: 480px;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.8s ease 0.3s both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  animation: fadeUp 0.8s ease 0.45s both;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  color: var(--midnight);
+  padding: 0.85rem 2rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.25);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--cloud);
+  padding: 0.85rem 2rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(0,212,255,0.3);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 3rem;
+  animation: fadeUp 0.8s ease 0.6s both;
+}
+
+.hero-stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--pure);
+}
+
+.hero-stat-value .unit { font-size: 0.9rem; color: var(--cyan); }
+.hero-stat-label { font-size: 0.75rem; color: var(--mist); margin-top: 2px; }
+
+/* HERO DASHBOARD MOCK */
+.hero-visual {
+  animation: fadeUp 1s ease 0.5s both;
+  position: relative;
+}
+
+.dashboard-mock {
+  background: var(--deep);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--glow), 0 40px 80px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.dash-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cloud);
+}
+
+.dash-live {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  color: var(--good);
+  font-weight: 500;
+}
+
+.dash-live::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--good);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74,234,188,0.4); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(74,234,188,0); }
+}
+
+.dash-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.dash-metric {
+  background: var(--slate);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.dash-metric-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mist);
+  margin-bottom: 0.4rem;
+}
+
+.dash-metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pure);
+}
+
+.dash-metric-unit {
+  font-size: 0.65rem;
+  color: var(--mist);
+  font-weight: 400;
+}
+
+.dash-metric.good .dash-metric-value { color: var(--good); }
+.dash-metric.warn .dash-metric-value { color: var(--amber); }
+.dash-metric.bad .dash-metric-value { color: var(--warn); }
+
+.dash-chart {
+  background: var(--slate);
+  border-radius: 10px;
+  padding: 1rem;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dash-chart-label {
+  font-size: 0.65rem;
+  color: var(--mist);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.chart-line {
+  position: absolute;
+  bottom: 10px; left: 10px; right: 10px;
+  height: 50px;
+}
+
+.chart-line svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dash-alert {
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--warn);
+}
+
+.dash-alert-dot {
+  width: 8px; height: 8px;
+  background: var(--warn);
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulse 1.5s ease infinite;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+  .hero .container { grid-template-columns: 1fr; }
+  .hero-visual { order: -1; }
+  .hero-stats { gap: 1.5rem; }
+}
+
+/* ======================== PROBLEM ======================== */
+.problem { border-top: 1px solid rgba(255,255,255,0.04); }
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.problem-card {
+  background: var(--deep);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  overflow: hidden;
+}
+
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--warn), var(--amber));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.problem-card:hover { transform: translateY(-4px); border-color: rgba(255,107,107,0.2); }
+.problem-card:hover::before { opacity: 1; }
+
+.problem-icon {
+  width: 48px; height: 48px;
+  background: rgba(255, 107, 107, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.problem-card h3 {
+  font-size: 1.1rem;
+  color: var(--pure);
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.problem-card p {
+  font-size: 0.88rem;
+  color: var(--mist);
+  line-height: 1.7;
+}
+
+.problem-stat {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--warn);
+}
+
+.problem-stat span { font-size: 0.75rem; color: var(--mist); font-weight: 400; display: block; }
+
+/* ======================== HOW IT WORKS ======================== */
+.how { background: var(--deep); }
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 3rem;
+  position: relative;
+}
+
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 50px;
+  left: 16.66%;
+  right: 16.66%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--teal), var(--mint));
+  opacity: 0.3;
+}
+
+.step {
+  text-align: center;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+.step-num {
+  width: 56px; height: 56px;
+  background: var(--slate);
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cyan);
+  position: relative;
+  z-index: 1;
+}
+
+.step h3 {
+  font-size: 1.15rem;
+  color: var(--pure);
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.step p {
+  font-size: 0.88rem;
+  color: var(--mist);
+  line-height: 1.7;
+}
+
+.step-detail {
+  margin-top: 1.2rem;
+  background: var(--slate);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: left;
+}
+
+.step-detail li {
+  font-size: 0.8rem;
+  color: var(--cloud);
+  padding: 4px 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.step-detail li::before {
+  content: '→';
+  color: var(--cyan);
+  font-size: 0.7rem;
+}
+
+@media (max-width: 768px) {
+  .steps { grid-template-columns: 1fr; gap: 2.5rem; }
+  .steps::before { display: none; }
+}
+
+/* ======================== HARDWARE ======================== */
+.hardware-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.device-visual {
+  background: var(--deep);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.device-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,212,255,0.05) 0%, transparent 70%);
+}
+
+.device-box {
+  width: 160px;
+  height: 160px;
+  background: linear-gradient(145deg, #1e2a4a, #151d38);
+  border-radius: 24px;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.device-ring {
+  width: 60px; height: 60px;
+  border: 3px solid var(--cyan);
+  border-radius: 50%;
+  position: relative;
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.device-ring::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 2px solid var(--teal);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.device-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.device-name {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.4rem;
+  color: var(--pure);
+  margin-top: 1.5rem;
+  position: relative;
+}
+
+.device-subtitle {
+  color: var(--mist);
+  font-size: 0.85rem;
+  position: relative;
+}
+
+.specs-list {
+  list-style: none;
+}
+
+.specs-list li {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spec-name {
+  font-size: 0.9rem;
+  color: var(--mist);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spec-dot {
+  width: 6px; height: 6px;
+  background: var(--cyan);
+  border-radius: 50%;
+}
+
+.spec-value {
+  font-size: 0.9rem;
+  color: var(--pure);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .hardware-grid { grid-template-columns: 1fr; }
+}
+
+/* ======================== FEATURES ======================== */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.feature-card {
+  background: var(--deep);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0,212,255,0.15);
+  box-shadow: var(--glow);
+}
+
+.feature-icon {
+  width: 44px; height: 44px;
+  background: rgba(0,212,255,0.08);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.feature-card h3 {
+  font-size: 1.05rem;
+  color: var(--pure);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  font-size: 0.88rem;
+  color: var(--mist);
+  line-height: 1.7;
+}
+
+/* ======================== WHO IT'S FOR ======================== */
+.audience { background: var(--deep); }
+
+.audience-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.audience-card {
+  background: var(--slate);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+
+.audience-card:hover {
+  border-color: rgba(0,212,255,0.15);
+  transform: translateY(-3px);
+}
+
+.audience-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.audience-card h3 {
+  font-size: 1rem;
+  color: var(--pure);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.audience-card p {
+  font-size: 0.82rem;
+  color: var(--mist);
+  line-height: 1.6;
+}
+
+/* ======================== PRICING ======================== */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.pricing-card {
+  background: var(--deep);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.pricing-card.featured {
+  border-color: var(--cyan);
+  background: linear-gradient(180deg, rgba(0,212,255,0.06), var(--deep));
+}
+
+.pricing-card.featured::before {
+  content: 'Most Popular';
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  color: var(--midnight);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 100px;
+  letter-spacing: 0.05em;
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glow);
+}
+
+.pricing-tier {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--mist);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.pricing-price {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--pure);
+  line-height: 1;
+}
+
+.pricing-price span {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--mist);
+}
+
+.pricing-desc {
+  font-size: 0.85rem;
+  color: var(--mist);
+  margin: 0.8rem 0 1.5rem;
+  line-height: 1.6;
+}
+
+.pricing-features {
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+.pricing-features li {
+  font-size: 0.85rem;
+  color: var(--cloud);
+  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pricing-features li::before {
+  content: '✓';
+  color: var(--good);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.pricing-btn {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.pricing-btn.primary {
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  color: var(--midnight);
+}
+
+.pricing-btn.secondary {
+  background: var(--slate);
+  color: var(--cloud);
+}
+
+.pricing-btn:hover { transform: translateY(-1px); }
+
+@media (max-width: 768px) {
+  .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+}
+
+/* ======================== MARKET ======================== */
+.market { background: var(--deep); }
+
+.market-bars {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.market-bar-item label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--cloud);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.market-bar-item label span { color: var(--cyan); font-weight: 700; }
+
+.market-bar {
+  height: 10px;
+  background: var(--slate);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.market-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--cyan), var(--mint));
+  transition: width 2s cubic-bezier(0.16,1,0.3,1);
+}
+
+.market-insights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.market-insight {
+  background: var(--slate);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.market-insight h4 {
+  font-size: 0.9rem;
+  color: var(--pure);
+  margin-bottom: 0.4rem;
+}
+
+.market-insight p {
+  font-size: 0.82rem;
+  color: var(--mist);
+  line-height: 1.6;
+}
+
+/* ======================== TECH STACK ======================== */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.tech-item {
+  background: var(--deep);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.tech-item:hover { border-color: rgba(0,212,255,0.15); }
+
+.tech-item h4 {
+  font-size: 0.95rem;
+  color: var(--pure);
+  margin-bottom: 0.3rem;
+}
+
+.tech-item p {
+  font-size: 0.78rem;
+  color: var(--mist);
+}
+
+/* ======================== ROADMAP ======================== */
+.roadmap { background: var(--deep); }
+
+.timeline {
+  margin-top: 3rem;
+  position: relative;
+  padding-left: 40px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 14px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--cyan), var(--teal), var(--mint), rgba(74,234,188,0.2));
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -33px; top: 6px;
+  width: 12px; height: 12px;
+  background: var(--cyan);
+  border-radius: 50%;
+  border: 3px solid var(--deep);
+}
+
+.timeline-date {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 0.3rem;
+}
+
+.timeline-item h3 {
+  font-size: 1.05rem;
+  color: var(--pure);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.timeline-item p {
+  font-size: 0.85rem;
+  color: var(--mist);
+  line-height: 1.6;
+}
+
+/* ======================== REVENUE ======================== */
+.revenue-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.revenue-card {
+  background: var(--deep);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.revenue-card h3 {
+  font-size: 1rem;
+  color: var(--pure);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.revenue-card p {
+  font-size: 0.88rem;
+  color: var(--mist);
+  line-height: 1.7;
+}
+
+.revenue-percent {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--cyan);
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .revenue-grid { grid-template-columns: 1fr; }
+}
+
+/* ======================== CTA ======================== */
+.cta-section {
+  text-align: center;
+  padding: 6rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,212,255,0.08) 0%, transparent 60%);
+}
+
+.cta-section h2 {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--pure);
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.cta-section p {
+  font-size: 1.05rem;
+  color: var(--mist);
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  position: relative;
+}
+
+/* ======================== FOOTER ======================== */
+footer {
+  border-top: 1px solid rgba(255,255,255,0.04);
+  padding: 2.5rem 0;
+  text-align: center;
+}
+
+footer p {
+  font-size: 0.8rem;
+  color: var(--steel);
+}
+
+footer a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+
+/* ======================== SCROLLBAR ======================== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--midnight); }
+::-webkit-scrollbar-thumb { background: var(--steel); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mist); }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <a href="#" class="logo">
+      <div class="logo-icon"></div>
+      CleanAir
+    </a>
+    <ul class="nav-links">
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#hardware">Hardware</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#market">Market</a></li>
+
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-text">
+      <div class="hero-badge">🌬️ Indoor Air Quality as a Service</div>
+      <h1>Breathe Smarter.<br><span class="gradient-text">Live Healthier.</span></h1>
+      <p class="hero-desc">CleanAir Collective provides AI-powered indoor air quality monitoring as a subscription service. Real-time sensors, smart dashboards, and automated ventilation guidance for healthier spaces.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn-primary">Get Started →</a>
+        <a href="#how" class="btn-secondary">See How It Works</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-value">90<span class="unit">%</span></div>
+          <div class="hero-stat-label">Time spent indoors</div>
+        </div>
+        <div>
+          <div class="hero-stat-value">5<span class="unit">x</span></div>
+          <div class="hero-stat-label">Indoor pollutants vs outdoor</div>
+        </div>
+        <div>
+          <div class="hero-stat-value">€4.6<span class="unit">B</span></div>
+          <div class="hero-stat-label">IAQ market by 2028</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="dashboard-mock">
+        <div class="dash-header">
+          <span class="dash-title">Office Floor 3 — Main Area</span>
+          <span class="dash-live">Live</span>
+        </div>
+        <div class="dash-metrics">
+          <div class="dash-metric warn">
+            <div class="dash-metric-label">CO₂</div>
+            <div class="dash-metric-value">1,240 <span class="dash-metric-unit">ppm</span></div>
+          </div>
+          <div class="dash-metric good">
+            <div class="dash-metric-label">PM2.5</div>
+            <div class="dash-metric-value">8.3 <span class="dash-metric-unit">μg/m³</span></div>
+          </div>
+          <div class="dash-metric good">
+            <div class="dash-metric-label">VOC</div>
+            <div class="dash-metric-value">142 <span class="dash-metric-unit">ppb</span></div>
+          </div>
+        </div>
+        <div class="dash-chart">
+          <div class="dash-chart-label">CO₂ Trend (24h)</div>
+          <div class="chart-line">
+            <svg viewBox="0 0 300 50" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#00d4ff"/>
+                  <stop offset="100%" stop-color="#4aeabc"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,35 C20,30 40,25 60,28 C80,31 100,20 120,15 C140,10 160,18 180,22 C200,26 220,12 240,8 C260,4 280,15 300,20" fill="none" stroke="url(#lineGrad)" stroke-width="2"/>
+              <path d="M0,35 C20,30 40,25 60,28 C80,31 100,20 120,15 C140,10 160,18 180,22 C200,26 220,12 240,8 C260,4 280,15 300,20 L300,50 L0,50 Z" fill="url(#lineGrad)" opacity="0.08"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dash-alert">
+          <span class="dash-alert-dot"></span>
+          CO₂ above threshold — AI suggests opening windows in Zone B for 15 min
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section problem" id="problem">
+  <div class="container">
+    <span class="section-tag">The Problem</span>
+    <h2 class="section-title">Indoor air is silently harming millions of people every day</h2>
+    <p class="section-desc">We spend up to 90% of our time indoors, yet most buildings have zero visibility into air quality. Poor indoor air causes headaches, fatigue, reduced focus, and long-term health damage — costing businesses billions.</p>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">🧠</div>
+        <h3>Cognitive Decline</h3>
+        <p>Harvard studies show that high CO₂ levels reduce cognitive function by up to 50%. Workers in poorly ventilated offices make worse decisions and are less productive.</p>
+        <div class="problem-stat">-50%<span>Cognitive performance at 1,400 ppm CO₂</span></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🏫</div>
+        <h3>Sick Building Syndrome</h3>
+        <p>Schools and offices with poor ventilation see higher rates of absenteeism, respiratory issues, and allergies. Children are especially vulnerable to airborne pollutants.</p>
+        <div class="problem-stat">3.5M<span>School days lost in EU to poor air yearly</span></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💶</div>
+        <h3>Hidden Economic Costs</h3>
+        <p>Poor IAQ costs European employers an estimated €20B annually in lost productivity, sick days, and healthcare. Yet most companies don't even measure it.</p>
+        <div class="problem-stat">€20B<span>Annual productivity loss in the EU</span></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">⚡</div>
+        <h3>Energy Waste</h3>
+        <p>Buildings often over-ventilate or under-ventilate because they lack data. Smart air quality monitoring enables demand-controlled ventilation, cutting HVAC energy use by 20-30%.</p>
+        <div class="problem-stat">30%<span>Potential HVAC energy savings</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how" id="how">
+  <div class="container">
+    <span class="section-tag">How It Works</span>
+    <h2 class="section-title">Three steps to healthier, smarter indoor spaces</h2>
+    <p class="section-desc">No complex installation. No upfront hardware costs. Just plug in, connect, and start breathing better.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Install Sensors</h3>
+        <p>Receive pre-configured CleanAir Node sensors. Plug them in anywhere — offices, classrooms, meeting rooms. They connect via WiFi in under 2 minutes.</p>
+        <div class="step-detail">
+          <li>No wiring or IT setup needed</li>
+          <li>Sensors shipped pre-calibrated</li>
+          <li>Optimal placement guide included</li>
+          <li>Magnetic mount for any surface</li>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Monitor in Real-Time</h3>
+        <p>Access your live dashboard showing CO₂, PM2.5, VOCs, temperature, and humidity across all zones. Set custom thresholds and receive instant alerts.</p>
+        <div class="step-detail">
+          <li>Real-time data every 30 seconds</li>
+          <li>Multi-zone floor map view</li>
+          <li>Mobile + desktop dashboard</li>
+          <li>Slack / email / SMS alerts</li>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Act on AI Insights</h3>
+        <p>Our AI engine analyzes patterns and provides specific, actionable recommendations — from opening windows to adjusting HVAC schedules to optimizing occupancy.</p>
+        <div class="step-detail">
+          <li>Predictive air quality forecasts</li>
+          <li>Energy-efficient ventilation tips</li>
+          <li>Automated HVAC integration (Pro)</li>
+          <li>Monthly health impact reports</li>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HARDWARE -->
+<section class="section" id="hardware">
+  <div class="container">
+    <span class="section-tag">The Hardware</span>
+    <h2 class="section-title">CleanAir Node — precision sensors, minimal footprint</h2>
+    <p class="section-desc">Industrial-grade accuracy in a device smaller than a smoke detector. Rented, not sold — we handle maintenance, calibration, and replacements.</p>
+
+    <div class="hardware-grid">
+      <div class="device-visual">
+        <div class="device-box">
+          <div class="device-ring"></div>
+          <span class="device-label">Node v1</span>
+        </div>
+        <div class="device-name">CleanAir Node</div>
+        <div class="device-subtitle">Multi-Sensor Air Quality Monitor</div>
+      </div>
+
+      <div>
+        <ul class="specs-list">
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>CO₂ Sensor</span>
+            <span class="spec-value">NDIR, 0–5,000 ppm ±30 ppm</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>PM2.5 / PM10</span>
+            <span class="spec-value">Laser scattering, 0–500 μg/m³</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>VOC (TVOC)</span>
+            <span class="spec-value">Metal oxide, 0–60,000 ppb</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>Temperature</span>
+            <span class="spec-value">-10°C to 60°C ±0.3°C</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>Humidity</span>
+            <span class="spec-value">0–100% RH ±2%</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>Connectivity</span>
+            <span class="spec-value">WiFi 802.11 b/g/n + BLE 5.0</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>Power</span>
+            <span class="spec-value">USB-C, 5V 1A (< 2W idle)</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>Size</span>
+            <span class="spec-value">95 × 95 × 28 mm, 120g</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>Enclosure</span>
+            <span class="spec-value">Recycled ABS, IP20, magnetic mount</span>
+          </li>
+          <li>
+            <span class="spec-name"><span class="spec-dot"></span>Data Rate</span>
+            <span class="spec-value">Every 30 sec, local buffer 72h</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <span class="section-tag">Platform Features</span>
+    <h2 class="section-title">Everything you need to manage indoor air quality at scale</h2>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Real-Time Dashboard</h3>
+        <p>Multi-zone floor maps with live readings, historical trends, and comparative analytics across locations. Customizable views for facility managers and executives.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Ventilation Engine</h3>
+        <p>Machine learning models trained on occupancy patterns, weather data, and building characteristics to provide minute-by-minute ventilation recommendations. Reduces energy while improving air.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3>Smart Alerts</h3>
+        <p>Multi-channel notifications (Slack, email, SMS, push) when any metric crosses your custom thresholds. Escalation workflows for critical events like VOC spikes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Health Impact Scoring</h3>
+        <p>Proprietary algorithm translating raw sensor data into an intuitive 0–100 Health Impact Score. Correlates air quality with productivity research to estimate cognitive and wellness effects.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏢</div>
+        <h3>HVAC Integration</h3>
+        <p>API connections to Building Management Systems (BMS) for automated demand-controlled ventilation. Compatible with major BMS platforms: Siemens, Honeywell, Johnson Controls.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>ESG & Compliance Reports</h3>
+        <p>Auto-generated monthly reports for CSRD, WELL Building, LEED, and BREEAM compliance. Export-ready PDFs for stakeholders, auditors, and sustainability teams.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Occupancy Correlation</h3>
+        <p>Cross-reference air quality with room booking data and people counters. Understand how occupancy impacts air quality and optimize room usage accordingly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3>Multi-Site Management</h3>
+        <p>Central portal for organizations with multiple offices, campuses, or school networks. Compare performance, share configs, and manage all sites from one place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section class="section audience">
+  <div class="container">
+    <span class="section-tag">Who It's For</span>
+    <h2 class="section-title">Designed for spaces where people spend their days</h2>
+
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="audience-emoji">🏢</div>
+        <h3>Corporate Offices</h3>
+        <p>Boost employee productivity, reduce sick days, and meet CSRD sustainability reporting requirements with continuous IAQ data.</p>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🏫</div>
+        <h3>Schools & Universities</h3>
+        <p>Protect students and teachers. EU guidelines increasingly require IAQ monitoring in educational institutions. We make compliance effortless.</p>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">💻</div>
+        <h3>Co-Working Spaces</h3>
+        <p>Differentiate your brand. Display real-time air quality on lobby screens. Premium air becomes a membership selling point.</p>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🏥</div>
+        <h3>Healthcare Facilities</h3>
+        <p>Critical air quality control for clinics, dental offices, and care homes. Reduce airborne pathogen risk with data-driven ventilation.</p>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🏛️</div>
+        <h3>Government Buildings</h3>
+        <p>Public sector buildings serving thousands daily. Support EU Green Deal mandates and protect civil servants and citizens.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="container">
+    <span class="section-tag">Pricing</span>
+    <h2 class="section-title">Simple subscription. No upfront hardware costs.</h2>
+    <p class="section-desc">Sensors are rented as part of your plan. We handle shipping, calibration, maintenance, and replacements. Cancel anytime after 12 months.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price">€29<span>/month per sensor</span></div>
+        <p class="pricing-desc">For small offices or individual classrooms getting started with IAQ visibility.</p>
+        <ul class="pricing-features">
+          <li>1–5 CleanAir Node sensors</li>
+          <li>Real-time dashboard</li>
+          <li>Email & push alerts</li>
+          <li>Monthly summary report</li>
+          <li>30-day data history</li>
+        </ul>
+        <a href="#" class="pricing-btn secondary">Get Started</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-tier">Professional</div>
+        <div class="pricing-price">€22<span>/month per sensor</span></div>
+        <p class="pricing-desc">For offices, schools, and co-working spaces that want AI-driven insights and automation.</p>
+        <ul class="pricing-features">
+          <li>6–50 sensors (volume discount)</li>
+          <li>AI ventilation recommendations</li>
+          <li>Health Impact Scoring</li>
+          <li>Slack, SMS & webhook alerts</li>
+          <li>ESG / WELL / LEED reports</li>
+          <li>12-month data history</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="pricing-btn primary">Start Free Trial</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-price">Custom</div>
+        <p class="pricing-desc">For multi-site organizations needing full HVAC integration, API access, and dedicated support.</p>
+        <ul class="pricing-features">
+          <li>50+ sensors, multi-site</li>
+          <li>BMS / HVAC auto-control</li>
+          <li>Full API access</li>
+          <li>Custom integrations</li>
+          <li>Dedicated account manager</li>
+          <li>Unlimited data retention</li>
+          <li>SLA guarantee</li>
+        </ul>
+        <a href="#" class="pricing-btn secondary">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVENUE MODEL -->
+<section class="section">
+  <div class="container">
+    <span class="section-tag">Revenue Model</span>
+    <h2 class="section-title">How CleanAir Collective generates sustainable revenue</h2>
+
+    <div class="revenue-grid">
+      <div class="revenue-card">
+        <div class="revenue-percent">65%</div>
+        <h3>Recurring SaaS Subscriptions</h3>
+        <p>Monthly per-sensor fees for the dashboard, AI engine, alerts, and reporting. High-margin software revenue that scales with the number of monitored zones. Average contract: 18 months.</p>
+      </div>
+      <div class="revenue-card">
+        <div class="revenue-percent">20%</div>
+        <h3>Hardware Rental Margin</h3>
+        <p>Sensors manufactured at ~€45 BOM cost, rented at €8–12/month embedded in the subscription. Hardware pays for itself in 4–5 months, then generates pure margin for the contract duration.</p>
+      </div>
+      <div class="revenue-card">
+        <div class="revenue-percent">10%</div>
+        <h3>Data & Analytics Licensing</h3>
+        <p>Aggregated, anonymized IAQ data sold to urban planners, HVAC manufacturers, real estate developers, and insurance companies. Valuable for smart city and building wellness research.</p>
+      </div>
+      <div class="revenue-card">
+        <div class="revenue-percent">5%</div>
+        <h3>Certification Consulting</h3>
+        <p>Assist clients in achieving WELL, LEED, or BREEAM certification using CleanAir data. One-time consulting fees + ongoing monitoring to maintain certification standards.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section class="section market" id="market">
+  <div class="container">
+    <span class="section-tag">Market Opportunity</span>
+    <h2 class="section-title">A market growing at 12%+ annually, driven by regulation and awareness</h2>
+
+    <div class="market-bars">
+      <div class="market-bar-item">
+        <label>Total Addressable Market (Global IAQ Monitoring) <span>€4.6B by 2028</span></label>
+        <div class="market-bar"><div class="market-bar-fill" style="width: 100%"></div></div>
+      </div>
+      <div class="market-bar-item">
+        <label>Serviceable Addressable Market (EU offices + schools) <span>€1.2B</span></label>
+        <div class="market-bar"><div class="market-bar-fill" style="width: 62%"></div></div>
+      </div>
+      <div class="market-bar-item">
+        <label>Serviceable Obtainable Market (CEE region, Year 3) <span>€18M</span></label>
+        <div class="market-bar"><div class="market-bar-fill" style="width: 15%"></div></div>
+      </div>
+      <div class="market-bar-item">
+        <label>Year 1 Revenue Target <span>€420K ARR</span></label>
+        <div class="market-bar"><div class="market-bar-fill" style="width: 5%"></div></div>
+      </div>
+    </div>
+
+    <div class="market-insights">
+      <div class="market-insight">
+        <h4>🇪🇺 EU CSRD Mandate</h4>
+        <p>Starting 2025, large EU companies must report on sustainability metrics including indoor environmental quality. This creates mandatory demand for IAQ data collection.</p>
+      </div>
+      <div class="market-insight">
+        <h4>📜 WELL Building Standard</h4>
+        <p>WELL certification is growing 30% year-over-year in Europe. Air quality monitoring is a core requirement — creating a direct pipeline of customers.</p>
+      </div>
+      <div class="market-insight">
+        <h4>🦠 Post-Pandemic Awareness</h4>
+        <p>COVID-19 permanently raised awareness about indoor air and ventilation. 68% of office workers now consider air quality when choosing a workplace.</p>
+      </div>
+      <div class="market-insight">
+        <h4>🏙️ Smart City Funding</h4>
+        <p>EU Horizon Europe and national programs fund smart building and clean air initiatives. Grants available for pilot programs in schools and public buildings.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="section">
+  <div class="container">
+    <span class="section-tag">Technology</span>
+    <h2 class="section-title">Built on proven, scalable technologies</h2>
+
+    <div class="tech-grid">
+      <div class="tech-item">
+        <h4>🔧 Firmware</h4>
+        <p>ESP32 + FreeRTOS, OTA updates, edge processing</p>
+      </div>
+      <div class="tech-item">
+        <h4>☁️ Cloud Backend</h4>
+        <p>AWS IoT Core, Lambda, DynamoDB, time-series on TimescaleDB</p>
+      </div>
+      <div class="tech-item">
+        <h4>🖥️ Frontend</h4>
+        <p>React + TypeScript, D3.js for visualizations, PWA support</p>
+      </div>
+      <div class="tech-item">
+        <h4>🤖 AI / ML</h4>
+        <p>Python, scikit-learn, TensorFlow Lite for on-device predictions</p>
+      </div>
+      <div class="tech-item">
+        <h4>🔌 Integrations</h4>
+        <p>REST API, MQTT, BACnet for BMS, Slack & Teams webhooks</p>
+      </div>
+      <div class="tech-item">
+        <h4>🔒 Security</h4>
+        <p>TLS 1.3, AES-256 at rest, SOC 2 Type II roadmap, GDPR compliant</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section roadmap">
+  <div class="container">
+    <span class="section-tag">Roadmap</span>
+    <h2 class="section-title">From prototype to market in 18 months</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Month 1–3 — Validation</div>
+        <h3>MVP Development & Pilot</h3>
+        <p>Build first 20 sensor prototypes using off-the-shelf components. Deploy free pilots in 3 locations (1 office, 1 school, 1 co-working space) in Bratislava. Validate product-market fit with user interviews.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Month 4–6 — Launch</div>
+        <h3>Beta Launch & First Revenue</h3>
+        <p>Launch dashboard v1 with core monitoring + alerts. Onboard 10 paying customers in Slovakia and Czech Republic. Begin AI model training on collected data. Apply for EU innovation grants.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Month 7–9 — Growth</div>
+        <h3>AI Features & Custom Hardware</h3>
+        <p>Release AI ventilation engine. Design custom PCB for CleanAir Node v1 to reduce manufacturing costs. Expand to Austria and Poland. Target: 50 customers, 300 sensors deployed.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Month 10–12 — Scale</div>
+        <h3>Enterprise & HVAC Integration</h3>
+        <p>Launch Enterprise tier with BMS integration. Partner with facility management companies. Begin B2G sales to municipalities. Target: €420K ARR, 150 customers.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Month 13–18 — Expand</div>
+        <h3>Pan-European Expansion</h3>
+        <p>Expand to Germany, Netherlands, and Nordics. Launch data analytics licensing. Pursue WELL/LEED partnership program. Target: €1.2M ARR, Series A readiness.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Ready to build <span class="gradient-text">CleanAir Collective</span>?</h2>
+    <p>Start monitoring your indoor air quality today. Healthier spaces, smarter energy use, happier people.</p>
+    <a href="#pricing" class="btn-primary" style="font-size:1.05rem; padding: 1rem 2.5rem;">
+      View Pricing Plans →
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>CleanAir Collective — Indoor Air Quality as a Service</p>
+    <p style="margin-top: 0.4rem; color: var(--steel);">Indoor Air Quality as a Service · IoT · SaaS · Health Tech · Ecology</p>
+  </div>
+</footer>
+
+</body>
+</html>
